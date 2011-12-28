@@ -44,6 +44,7 @@ class Zip {
 	private $streamFile = NULL;
 	private $streamData = NULL;
 	private $streamFileLength = 0;
+	private $addExtraField = NULL;
 
 	/**
 	 * Constructor.

@@ -35,46 +35,46 @@ class EPub {
 	public $maxImageWidth = 768;
 	public $maxImageHeight = 1024;
 
-	private $splitDefaultSize = 250000;
+	protected $splitDefaultSize = 250000;
 
-	private $zip;
+	protected $zip;
 
-	private $title = "";
-	private $language = "en";
-	private $identifier = "";
-	private $identifierType = "";
-	private $description = "";
-	private $author = "";
-	private $authorSortKey = "";
-	private $publisherName = "";
-	private $publisherURL = "";
-	private $date = 0;
-	private $rights = "";
-	private $subject = "";
-	private $coverage = "";
-	private $relation = "";
-	private $sourceURL = "";
+	protected $title = "";
+	protected $language = "en";
+	protected $identifier = "";
+	protected $identifierType = "";
+	protected $description = "";
+	protected $author = "";
+	protected $authorSortKey = "";
+	protected $publisherName = "";
+	protected $publisherURL = "";
+	protected $date = 0;
+	protected $rights = "";
+	protected $subject = "";
+	protected $coverage = "";
+	protected $relation = "";
+	protected $sourceURL = "";
 
-	private $chapterCount = 0;
-	private $opf_manifest = "";
-	private $opf_spine = "";
-	private $ncx_navmap = "";
-	private $opf = "";
-	private $ncx = "";
-	private $isFinalized = FALSE;
-	private $isCoverImageSet = FALSE;
+	protected $chapterCount = 0;
+	protected $opf_manifest = "";
+	protected $opf_spine = "";
+	protected $ncx_navmap = "";
+	protected $opf = "";
+	protected $ncx = "";
+	protected $isFinalized = FALSE;
+	protected $isCoverImageSet = FALSE;
 
-	private $fileList = array();
+	protected $fileList = array();
 
-	private $dateformat = 'Y-m-d\TH:i:s.000000P'; // ISO 8601 long
-	private $dateformatShort = 'Y-m-d'; // short date format to placate ePubChecker.
-	private $headerDateFormat = "D, d M Y H:i:s T";
+	protected $dateformat = 'Y-m-d\TH:i:s.000000P'; // ISO 8601 long
+	protected $dateformatShort = 'Y-m-d'; // short date format to placate ePubChecker.
+	protected $headerDateFormat = "D, d M Y H:i:s T";
 
 	protected $isGdInstalled;
-	private $docRoot = NULL;
+	protected $docRoot = NULL;
 	
-	private $EPubMark = TRUE;
-	private $generator = "";
+	protected $EPubMark = TRUE;
+	protected $generator = "";
 
 	/**
 	 * Class constructor.
