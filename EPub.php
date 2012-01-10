@@ -196,7 +196,7 @@ class EPub {
 	 * @return bool $success
 	 */
 	function addChapter($chapterName, $fileName, $chapterData, $autoSplit = FALSE, $externalReferences = EPub::EXTERNAL_REF_IGNORE, $baseDir = "") {
-		if ($this->isFinalized) {
+	    if ($this->isFinalized) {
 			return FALSE;
 		}
 		$fileName = preg_replace('#\\\#i', "/", $fileName);
@@ -305,7 +305,7 @@ class EPub {
 			$xml = new DOMDocument('1.0', "utf-8");
 			$xml->lookupPrefix("http://www.w3.org/1999/xhtml");
 			$xml->preserveWhiteSpace = FALSE;
-			$xml->formatOutput = TRUE;
+			// $xml->formatOutput = TRUE;
 
 			$xml2Doc = new DOMDocument('1.0', "utf-8");
 			$xml2Doc->lookupPrefix("http://www.w3.org/1999/xhtml");
@@ -530,7 +530,7 @@ class EPub {
 			$urlinfo = parse_url($source);
 
 			if (strpos($urlinfo['path'], $baseDir."/") !== FALSE) {
-				$internalSrc = substr($urlinfo['path'], strpos($urlinfo['path'], $baseDir."/") + strlen($basedir) + 1);
+				$internalSrc = substr($urlinfo['path'], strpos($urlinfo['path'], $baseDir."/") + strlen($baseDir) + 1);
 			}
 			$internalPath = $urlinfo["scheme"] . "/" . $urlinfo["host"] . "/" . pathinfo($urlinfo["path"], PATHINFO_DIRNAME);
 			$isSourceExternal = TRUE;
