@@ -225,7 +225,7 @@ class EPub {
 			$this->chapterCount++;
 			$this->opf_manifest .= "\t\t<item id=\"chapter" . $this->chapterCount . "\" href=\"" . $fileName . "\" media-type=\"application/xhtml+xml\" />\n";
 			$this->opf_spine .= "\t\t<itemref idref=\"chapter" . $this->chapterCount . "\" />\n";
-			$this->ncx_navmap .= "\n\t\t<navPoint id=\"chapter" . $this->chapterCount . "\" playOrder=\"" . $this->chapterCount . "\">\n\t\t\t<navLabel><text>" . $chapterName . "</text></navLabel>\n\t\t\t<content src=\"" . $fileName . "\" />\n\t\t</navPoint>\n";
+			// $this->ncx_navmap .= "\n\t\t<navPoint id=\"chapter" . $this->chapterCount . "\" playOrder=\"" . $this->chapterCount . "\">\n\t\t\t<navLabel><text>" . $chapterName . "</text></navLabel>\n\t\t\t<content src=\"" . $fileName . "\" />\n\t\t</navPoint>\n";
 		} else if (is_array($chapter)) {
 			$partCount = 0;
 			$this->chapterCount++;
@@ -287,7 +287,14 @@ class EPub {
 
 		if ($isDocAString) {
 			$xmlDoc = new DOMDocument();
-			@$xmlDoc->loadHTML($doc);
+			libxml_use_internal_errors(true);
+			$xmlDoc->loadHTML($doc);
+			$errors = libxml_get_errors();
+			if (count($errors)) {
+				$this->handleLoadHtmlError($errors, $doc);
+				exit(0);
+			}
+			libxml_use_internal_errors(false);
 		} else {
 			$xmlDoc = $doc;
 		}
@@ -545,7 +552,8 @@ class EPub {
 		if ($imageData !== FALSE) {
 			$internalPath = Zip::getRelativePath("images/" . $internalPath . "/" . $internalSrc);
 		    if (!array_key_exists($internalPath, $this->fileList)) {
-				$this->addFile($internalPath, "i_" . $internalSrc, $imageData['image'], $imageData['mime']);
+		        $internalId = "i_" . $internalSrc;
+				$this->addFile($internalPath, "i" . uniqid() . "_" . $internalSrc, $imageData['image'], $imageData['mime']);
 				$this->fileList[$internalPath] = $source;
 			}
 			return TRUE;
@@ -588,7 +596,7 @@ class EPub {
 		$this->opf_manifest = "\t\t<item id=\"coverPage\" href=\"CoverPage.html\" media-type=\"application/xhtml+xml\" />\n" . $this->opf_manifest;
 		$this->opf_spine = "\t\t<itemref idref=\"coverPage\" linear=\"no\" />\n" . $this->opf_spine;
 		$this->opf_guide .= "\t\t<reference href=\"CoverPage.html\" type=\"cover\" title=\"coverPage\"/>\n";
-		$this->ncx_navmap = "\n\t\t<navPoint id=\"\" playOrder=\"0\">\n\t\t\t<navLabel><text>Cover</text></navLabel>\n\t\t\t<content src=\"CoverPage.html\" />\n\t\t</navPoint>\n" . $this->ncx_navmap;
+		// $this->ncx_navmap = "\n\t\t<navPoint id=\"\" playOrder=\"0\">\n\t\t\t<navLabel><text>Cover</text></navLabel>\n\t\t\t<content src=\"CoverPage.html\" />\n\t\t</navPoint>\n" . $this->ncx_navmap;
 
 		$this->isCoverImageSet = TRUE;
 		return TRUE;
@@ -1418,6 +1426,29 @@ class EPub {
 	 */
 	function getSplitSize() {
 		return $this->splitDefaultSize;
+	}
+
+	/**
+	 * Function to handle HTML Errors for DOMDocument::loadHtmlError()
+	 */
+	function handleLoadHtmlError($errors, $doc) {
+		$output = '';
+		foreach ($errors as $error) {
+			$output .= 'Error: Line ' . $error->line . ' : ' . $error->message . "\n";
+		}
+		$tpl = <<<EOF
+<html>
+  <head>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js' type='text/javascript'></script>
+    <link rel="stylesheet" href='http://cdn.bitbucket.org/shekharpro/google_code_prettify/downloads/prettify.css' />
+  </head>
+  <body onload='prettyPrint()'>
+    <pre>%s</pre>
+    <pre class='prettyprint linenums'>%s</pre>
+  </body>
+</html>
+EOF;
+		printf($tpl, $output, htmlspecialchars($doc));
 	}
 }
 ?>
